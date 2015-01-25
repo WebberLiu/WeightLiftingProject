@@ -23,60 +23,32 @@ inTrain = createDataPartition(pmlTraining$classe, p = 0.7, list = FALSE)
 training = pmlTraining[inTrain, ]
 testing = pmlTraining[-inTrain, ]
 ```
-
-Thirdly, By heuristic, I omited some the features that are marked redundant terms: X, time, user_name. I also looked at the data values quickly and found that:
-  1. new_window is boolean variable so mabe it does not affect the classification
-  2. A lot of fields have NA value or miss-value so I should choose some the meaningful variables for classification
-  
-Next, I removed the colums that have NA or miss-value
+First check the ratio of NAs in each column in the training set and test set.
 ```{r}
-index <- c()
-n <- dim(training)[2]
-for( i in 1:n){
-  if(is.numeric(training[,i])  & is.numeric(testing[,i]) ){
-    index <- c(index, i)
-  }
-}
-index <- c(index, 160)
-realTraing <- training[,index]
-
+table(colMeans(is.na(df.training)))
+table(colMeans(is.na(df.testing)))
 ```
-After that, I made some graphes the make me a overview from the data. The first variable that I chose is num_window
-```{r}
-library(caret)
-par(mfcol=c(5,1))
+There are 67 columns in training set and 100 columns in test set with very high ratios of NAs. 
 
-ggplot(aes(num_window), data= training) +
-  geom_histogram(aes(colour=classe, fill=classe), binwidth=1) +
-  facet_wrap(~classe, ncol=1)
-```
-
-Then, Based on this graph, the evidence that is the distinct bin's values for each class is meaningfully. Thus, I try to test just attribute with a sepecific machine learning algorith. Based on my experince, I notice that the distribute the num_window value in a class does not continue so I chose the random forest algorithm.
-Next step, make a validation set and testing set
+## Random Forest Prediction
+Perform the random forest on the training data
 ```{r}
-inTrain <- createDataPartition(y=training$classe,p=0.7, list=FALSE)
-Rtraining <- training[inTrain,-1]
-Rtesting <- training[-inTrain,-1]
-
-```
-Nextly, I run the random forest on Rtraing data
-```{r}
-if (file.exists("modFit2_rf_numwindow.RData")) {
-    load("modFit2_rf_numwindow.RData")
-} else {
-  modFit2 <- train(classe ~ num_window, method="rf", data= Rtraining, prox=TRUE)
-  save(modFit2, file = "modFit2_rf_numwindow.RData")
+  modFit <- train(classe ~ num_window, method="rf", data= Rtraining, prox=TRUE)
 }
 ```
-Waiting some minutes for completing, I found the result that is very best fit
+It is found the result is a good fit.
 ```{r}
-modFit2
-confusionMatrix(Rtesting$classe, predict(modFit2, Rtesting))
+modFit
+confusionMatrix(Rtesting$classe, predict(modFit, testing))
 ```
-Finally,I used this model for predicting on the testing data
+The confusion matrix indicates very low classification error, with a 1.2% out of bag error rate. 
+
+## Testing the result
+The trained random forest model is used to predict the testing data
 ```{r}
-predict(modFit2, testing)
+predict(modFit, testing)
 ```
-
-
+## Reference
+Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. Qualitative Activity Recognition of Weight Lifting Exercises. Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13) . Stuttgart, Germany: ACM SIGCHI, 2013. Read more: http://groupware.les.inf.puc-rio.br/har#wle_paper_section#ixzz3ALjBH6NX
+http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm#ooberr
 
