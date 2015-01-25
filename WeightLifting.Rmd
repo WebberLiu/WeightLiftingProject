@@ -50,6 +50,9 @@ predict(modFit, testing)
 ```
 The testing result shows that the accuracy is 94.5% for our model: thus an expected out of sample error of 5.5%. It is lower than the training, but still it is a relatively good prediction model overall.
 
+## Conclusion
+For the purposes of the class project we used a very simplistic approach with the Random Forest learning method. To improve our accuracy, attempts might be done to use a more robust model validation / cross-validation technique. Other machine learning techniques might also be tried and compared. Combining predictors may also be considered in future studies.
+
 ## Reference
 1. Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. Qualitative Activity Recognition of Weight Lifting Exercises. Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13) . Stuttgart, Germany: ACM SIGCHI, 2013.
 Read more: http://groupware.les.inf.puc-rio.br/har#wle_paper_section#ixzz3ALjBH6NX
