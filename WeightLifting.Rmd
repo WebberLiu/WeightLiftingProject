@@ -1,5 +1,4 @@
-Practical Machine Learning Course
-Coursera
+
 Project: Weight Lifting Exercise Dataset
 ========================================================
 Firstly, loading data
